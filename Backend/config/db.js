@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client } = require('pg');
+
 const { Sequelize, DataTypes } = require('sequelize');
 const username = process.env.DB_USER
 const password = process.env.DB_PASSWORD
@@ -29,7 +29,8 @@ const User = sequelize.define('User', {
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {
-  timestamps: false, // Отключаем автоматические поля updatedAt
+  timestamps: false, 
+  paranoid: true,// Отключаем автоматические поля updatedAt
 });
 // Модель Event
 const Event = sequelize.define('Event', {
@@ -61,6 +62,6 @@ const Event = sequelize.define('Event', {
 });
 User.hasMany(Event, { foreignKey: 'createdBy' }); // Один пользователь может создать много мероприятий
 Event.belongsTo(User, { foreignKey: 'createdBy' }); // Каждое мероприятие принадлежит одному пользователю
-module.exports = sequelize;
-module.exports = Client;
-module.exports = Event;
+module.exports.sequelize = sequelize;
+module.exports.User = User;
+module.exports.Event = Event;

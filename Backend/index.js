@@ -2,16 +2,35 @@ const express = require("express");
 require("dotenv").config;
 const CORS = require("cors");
 const http =  require("http");
+const { swaggerDocs, swaggerUi } = require('./swagger');
 const { sequelize } = require('./config/db');
 const event_router = require('./API/event');
-const client_router = require('./API/client');
+const User_router = require('./API/client');
+const morgan = require('morgan');
 
 const app = express();
 const port = process.env.SERVERPORT|| 3000;
 app.use(express.json());
-app.use(CORS());
+// Настройка CORS
+const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS?.split(',') || [];
+const allowedMethods = process.env.CORS_ALLOWED_METHODS?.split(',') || [];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true); // Разрешаем запрос
+    } else {
+      callback(new Error('Not allowed by CORS')); // Отклоняем запрос
+    }
+  },
+  methods: allowedMethods, // Разрешённые HTTP-методы
+};
+
+app.use(CORS(corsOptions));
+app.use(morgan('[HTTP] :method :url - :status (:response-time ms)'));
 app.use("/event", event_router);
-app.use("/client",client_router);
+app.use("/user",User_router);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // Синхронизация базы данных и запуск приложения
 async function auth(){
     try {
