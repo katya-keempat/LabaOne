@@ -17,7 +17,8 @@ app.use(express.json());
 
 passportconfig(passport);
 app.use(passport.initialize())
-app.use("/auth",auth_router);
+app.use("/register",auth_router);
+app.use("/login", login_router);
 // Настройка CORS
 const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS?.split(',') || [];
 const allowedMethods = process.env.CORS_ALLOWED_METHODS?.split(',') || [];

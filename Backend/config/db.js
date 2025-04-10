@@ -29,6 +29,10 @@ const User = sequelize.define('User', {
     unique: true,
     allowNull: false,
   },
+  lastIpAddress: {  // Новое поле для хранения последнего IP-адреса
+    type: DataTypes.STRING,
+    allowNull: true,
+},
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
